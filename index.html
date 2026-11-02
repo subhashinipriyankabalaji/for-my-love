@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanmani Anbodu Kaathalan | Interactive Gift</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cinzel:wght@600;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0b0810;
+            --paper-bg: #f8f3e6;
+            --paper-border: #dcd0bc;
+            --ink-color: #1a120b;
+            --accent-red: #9e1c1c;
+            --gold: #d4af37;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier Prime', monospace;
+            background-image: radial-gradient(circle at 50% 50%, #1c1528 0%, #050408 100%);
+            color: #ece8e1;
+            padding: 20px;
+        }
+
+        .player-container {
+            width: 100%;
+            max-width: 620px;
+            background: #14101b;
+            border: 1px solid #322642;
+            border-radius: 12px;
+            padding: 28px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            text-align: center;
+        }
+
+        h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+        }
+
+        /* DYNAMIC SCENE ANIMATION CONTAINER */
+        .stage-box {
+            position: relative;
+            width: 100%;
+            height: 140px;
+            background: #191224;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid #3a2b4c;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+            transition: box-shadow 0.5s ease;
+        }
+
+        .scene {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .scene.active {
+            display: flex;
+        }
+
+        /* Scene 1: Writing Letter */
+        .writer-desk {
+            font-family: 'Caveat', cursive;
+            font-size: 1.5rem;
+            color: #f3e9d2;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .pen-anim {
+            font-size: 2rem;
+            animation: writeMove 0.6s infinite alternate ease-in-out;
+        }
+        @keyframes writeMove {
+            0% { transform: rotate(-10deg) translateY(0); }
+            100% { transform: rotate(15deg) translateY(-6px); }
+        }
+
+        /* Scene 2: Cozy Home */
+        .home-icon {
+            font-size: 2.4rem;
+            animation: pulseHome 1.2s infinite alternate ease-in-out;
+        }
+        @keyframes pulseHome {
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px #ffb347); }
+            100% { transform: scale(1.15); filter: drop-shadow(0 0 20px #ffcc00); }
+        }
+
+        /* Scene 3: Poetic Notes */
+        .notes-float {
+            font-size: 2rem;
+            animation: floatUp 1.2s infinite ease-out;
+        }
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translateY(15px) scale(0.7); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-25px) scale(1.2); }
+        }
+
+        /* Scene 4: Word Struggle */
+        .think-anim {
+            font-size: 2rem;
+            animation: shakeHead 0.8s infinite alternate ease-in-out;
+        }
+        @keyframes shakeHead {
+            0% { transform: rotate(-8deg); }
+            100% { transform: rotate(8deg); }
+        }
+
+        /* Scene 5: Heart Pulse */
+        .heart-pulse {
+            font-size: 2.6rem;
+            animation: bigHeart 0.6s infinite alternate ease-in-out;
+        }
+        @keyframes bigHeart {
+            0% { transform: scale(0.9); }
+            100% { transform: scale(1.25); filter: drop-shadow(0 0 25px #ff4d4d); }
+        }
+
+        .scene-text {
+            font-family: 'Caveat', cursive;
+            font-size: 1.2rem;
+            color: #d4af37;
+            margin-top: 6px;
+        }
+
+        .audio-box {
+            margin-bottom: 18px;
+        }
+
+        audio {
+            width: 100%;
+            border-radius: 30px;
+        }
+
+        /* SYNCHRONIZED LYRICS */
+        .lyrics-box {
+            background: #0b0810;
+            border-radius: 8px;
+            padding: 15px;
+            height: 250px;
+            overflow-y: auto;
+            font-family: 'Caveat', cursive;
+            border: 1px solid #231b30;
+            text-align: left;
+            scroll-behavior: smooth;
+        }
+
+        .lyric-item {
+            margin-bottom: 15px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            opacity: 0.35;
+        }
+
+        .lyric-item.active {
+            opacity: 1;
+            background: rgba(158, 28, 28, 0.28);
+            border-left: 4px solid var(--gold);
+            transform: translateX(4px) scale(1.02);
+        }
+
+        .lyric-ta {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #f8f3e6;
+        }
+
+        .lyric-item.active .lyric-ta {
+            color: var(--gold);
+        }
+
+        .lyric-en {
+            font-size: 1.1rem;
+            color: #b3a4c4;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="player-container">
+        <h2>Kanmani Anbodu Kaathalan</h2>
+
+        <!-- DYNAMIC SCENE STAGE -->
+        <div class="stage-box">
+            <!-- Scene 1: Writing -->
+            <div class="scene active" id="scene-write">
+                <div class="writer-desk">
+                    <span>Writing a love letter...</span>
+                    <span class="pen-anim">✍️</span>
+                </div>
+                <div class="scene-text">Penning words with devotion</div>
+            </div>
+
+            <!-- Scene 2: Home & Health -->
+            <div class="scene" id="scene-home">
+                <div class="home-icon">🏡✨</div>
+                <div class="scene-text">Asking about your well-being</div>
+            </div>
+
+            <!-- Scene 3: Poetic Flow -->
+            <div class="scene" id="scene-poetry">
+                <div class="notes-float">📜🎶</div>
+                <div class="scene-text">Poetry pours out thinking of you</div>
+            </div>
+
+            <!-- Scene 4: Word Struggle -->
+            <div class="scene" id="scene-struggle">
+                <div class="think-anim">🤔💭</div>
+                <div class="scene-text">Words fail to express this depth</div>
+            </div>
+
+            <!-- Scene 5: Heart Transition -->
+            <div class="scene" id="scene-heart">
+                <div class="heart-pulse">❤️</div>
+                <div class="scene-text">Oho...</div>
+            </div>
+
+            <!-- Scene 6: Ending Finale -->
+            <div class="scene" id="scene-end">
+                <div class="heart-pulse">💖✨</div>
+                <div class="scene-text">Forever in my heart</div>
+            </div>
+        </div>
+
+        <div class="audio-box">
+            <audio controls id="song-audio">
+                <source src="song.mp3" type="audio/mpeg">
+                Your browser does not support audio playback.
+            </audio>
+        </div>
+
+        <!-- Karaoke Synchronized Lyrics Container -->
+        <div class="lyrics-box" id="lyrics-scroll">
+            
+            <div class="lyric-item" data-start="1" data-end="8" data-scene="scene-write">
+                <div class="lyric-ta">Kanmani Anbodu Kaathalan Naan Ezhuthum Kadithamae..</div>
+                <div class="lyric-en">Dearest Kanmani, this is the letter written with love by your lover..</div>
+            </div>
+
+            <div class="lyric-item" data-start="9" data-end="17" data-scene="scene-home">
+                <div class="lyric-ta">Ponmani Un Veetil Sowkiyama Naan Ingu Sowkyamae..</div>
+                <div class="lyric-en">My precious one, are you fine at home? I am doing well here..</div>
+            </div>
+
+            <div class="lyric-item" data-start="18" data-end="22" data-scene="scene-poetry">
+                <div class="lyric-ta">Unnai Enni Paarkaiyil Kavithai Kottuthu..</div>
+                <div class="lyric-en">When I think of you, poetry flows effortlessly..</div>
+            </div>
+
+            <div class="lyric-item" data-start="23" data-end="25" data-scene="scene-struggle">
+                <div class="lyric-ta">Athai Ezhutha Ninaikaiyil Vaarthai Muttuthu..</div>
+                <div class="lyric-en">But when I try to write it down, words fail me..</div>
+            </div>
+
+            <div class="lyric-item" data-start="26" data-end="27" data-scene="scene-heart">
+                <div class="lyric-ta">oho..</div>
+                <div class="lyric-en">oho..</div>
+            </div>
+
+            <div class="lyric-item" data-start="28" data-end="35" data-scene="scene-write">
+                <div class="lyric-ta">kanmani anbodu kadhalan naan ezhuthum kadithamae...</div>
+                <div class="lyric-en">Dearest Kanmani, this is the letter written with love by your lover..</div>
+            </div>
+
+            <div class="lyric-item" data-start="36" data-end="44" data-scene="scene-home">
+                <div class="lyric-ta">Ponmani Un Veetil Sowkiyama Naan Ingu Sowkyamae..</div>
+                <div class="lyric-en">My precious one, are you fine at home? I am doing well here..</div>
+            </div>
+
+            <div class="lyric-item" data-start="45" data-end="48" data-scene="scene-poetry">
+                <div class="lyric-ta">Unnai Enni Paarkaiyil Kavithai Kottuthu..</div>
+                <div class="lyric-en">When I think of you, poetry flows effortlessly..</div>
+            </div>
+
+            <div class="lyric-item" data-start="49" data-end="53" data-scene="scene-struggle">
+                <div class="lyric-ta">Athai Ezhutha Ninaikaiyil Vaarthai Muttuthu..</div>
+                <div class="lyric-en">But when I try to write it down, words fail me..</div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('song-audio');
+        const lyricItems = document.querySelectorAll('.lyric-item');
+        const scenes = document.querySelectorAll('.scene');
+
+        function switchScene(sceneId) {
+            scenes.forEach(scene => {
+                if (scene.id === sceneId) {
+                    scene.classList.add('active');
+                } else {
+                    scene.classList.remove('active');
+                }
+            });
+        }
+
+        function syncLyricsAndScene() {
+            if (!audio.paused) {
+                const currentTime = audio.currentTime;
+                let activeFound = false;
+
+                lyricItems.forEach((item) => {
+                    const start = parseFloat(item.getAttribute('data-start'));
+                    const end = parseFloat(item.getAttribute('data-end'));
+                    const targetScene = item.getAttribute('data-scene');
+
+                    if (currentTime >= start && currentTime <= end) {
+                        activeFound = true;
+                        if (!item.classList.contains('active')) {
+                            item.classList.add('active');
+                            item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            switchScene(targetScene);
+                        }
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+
+                if (!activeFound && currentTime > 53) {
+                    switchScene('scene-end');
+                }
+            }
+            requestAnimationFrame(syncLyricsAndScene);
+        }
+
+        audio.addEventListener('play', () => {
+            requestAnimationFrame(syncLyricsAndScene);
+        });
+    </script>
+</body>
+</html>
